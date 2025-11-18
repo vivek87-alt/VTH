@@ -71,7 +71,6 @@ const Heatmap: React.FC<HeatmapProps> = ({ logs, onDayClick, selectedDate }) => 
   }, [logs]);
 
   // Auto-scroll to the end (current month) on mount only.
-  // We deliberately exclude 'months' from deps to prevent scrolling when data updates.
   useEffect(() => {
     if (scrollRef.current) {
         scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
@@ -79,18 +78,18 @@ const Heatmap: React.FC<HeatmapProps> = ({ logs, onDayClick, selectedDate }) => 
   }, []);
 
   const getCellColor = (status: HabitStatus, isFuture: boolean) => {
-    if (isFuture) return 'bg-slate-900 opacity-50 cursor-not-allowed';
+    if (isFuture) return 'bg-zinc-800/30 opacity-30';
     
     switch (status) {
       case HabitStatus.SUCCESS:
-        return 'bg-habit-success hover:bg-green-400 shadow-[0_0_5px_rgba(34,197,94,0.4)]';
+        return 'bg-habit-success shadow-[0_0_8px_rgba(74,222,128,0.6)] scale-105';
       case HabitStatus.PARTIAL:
-        return 'bg-habit-partial hover:bg-yellow-400';
+        return 'bg-habit-partial shadow-[0_0_6px_rgba(251,191,36,0.5)]';
       case HabitStatus.FAIL:
-        return 'bg-habit-fail hover:bg-red-400';
+        return 'bg-habit-fail shadow-[0_0_6px_rgba(248,113,113,0.5)] opacity-80';
       case HabitStatus.NONE:
       default:
-        return 'bg-habit-empty hover:bg-slate-700';
+        return 'bg-habit-empty hover:bg-zinc-700';
     }
   };
 
@@ -98,15 +97,15 @@ const Heatmap: React.FC<HeatmapProps> = ({ logs, onDayClick, selectedDate }) => 
     <div className="w-full">
         <div 
             ref={scrollRef}
-            className="flex overflow-x-auto gap-6 pb-4 scroll-smooth"
-            style={{ scrollbarWidth: 'thin' }}
+            className="flex overflow-x-auto gap-8 pb-6 pt-2 px-1 scroll-smooth mask-linear-fade"
+            style={{ scrollbarWidth: 'none' }} // Hide scrollbar for cleaner look
         >
             {months.map((month, mIndex) => (
                 <div key={`${month.year}-${mIndex}`} className="flex flex-col min-w-max select-none">
-                    <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
-                        {month.name} <span className="text-slate-700 font-normal">{month.year}</span>
+                    <div className="text-[10px] font-bold text-zinc-500 mb-3 uppercase tracking-widest">
+                        {month.name}
                     </div>
-                    <div className="grid grid-cols-7 gap-1">
+                    <div className="grid grid-cols-7 gap-1.5">
                         {month.days.map((cell, dIndex) => {
                             if (!cell) {
                                 return <div key={`empty-${dIndex}`} className="w-3 h-3 sm:w-3.5 sm:h-3.5" />;
@@ -119,12 +118,12 @@ const Heatmap: React.FC<HeatmapProps> = ({ logs, onDayClick, selectedDate }) => 
                                     key={cell.dateStr}
                                     onClick={() => !cell.isFuture && onDayClick?.(cell.dateStr)}
                                     className={`
-                                        w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[2px] transition-all duration-200 
+                                        w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full transition-all duration-300 ease-out
                                         ${getCellColor(cell.status, cell.isFuture)}
-                                        ${isSelected ? 'ring-2 ring-white ring-offset-1 ring-offset-slate-900 z-10 scale-110' : ''}
-                                        ${!cell.isFuture ? 'cursor-pointer' : ''}
+                                        ${isSelected ? 'ring-2 ring-white ring-offset-2 ring-offset-black z-10 scale-125' : ''}
+                                        ${!cell.isFuture ? 'cursor-pointer hover:scale-125' : ''}
                                     `}
-                                    title={`${cell.dateStr}: ${cell.status === HabitStatus.NONE ? 'No Data' : cell.status === HabitStatus.SUCCESS ? 'Success' : cell.status === HabitStatus.FAIL ? 'Failed' : 'Partial'}`}
+                                    title={`${cell.dateStr}`}
                                 />
                             );
                         })}
@@ -133,26 +132,23 @@ const Heatmap: React.FC<HeatmapProps> = ({ logs, onDayClick, selectedDate }) => 
             ))}
         </div>
 
-        {/* Legend */}
-        <div className="flex justify-between items-center text-xs text-slate-500 mt-2 px-1 border-t border-slate-800 pt-3">
-            <span className="hidden sm:inline">Yearly Overview</span>
-            <div className="flex gap-3 items-center">
-                <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-[2px] bg-habit-empty"></div>
-                    <span>None</span>
-                </div>
-                <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-[2px] bg-habit-fail"></div>
-                    <span>Fail</span>
-                </div>
-                <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-[2px] bg-habit-partial"></div>
-                    <span>Partial</span>
-                </div>
-                <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-[2px] bg-habit-success"></div>
-                    <span>Done</span>
-                </div>
+        {/* Legend - Minimalist */}
+        <div className="flex justify-end items-center text-[10px] font-medium text-zinc-500 mt-2 gap-4 uppercase tracking-wider">
+            <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-habit-empty"></div>
+                <span>None</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-habit-fail"></div>
+                <span>Miss</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-habit-partial"></div>
+                <span>Meh</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-habit-success shadow-[0_0_4px_rgba(74,222,128,0.5)]"></div>
+                <span>Done</span>
             </div>
         </div>
     </div>
