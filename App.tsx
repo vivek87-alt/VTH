@@ -210,46 +210,52 @@ export default function App() {
                     return (
                         <div 
                             key={habit.id} 
-                            onClick={() => openHabitDetail(habit.id)}
-                            className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-md hover:border-indigo-500/50 hover:bg-slate-800 transition-all cursor-pointer group relative"
+                            className="bg-slate-900 border border-slate-800 rounded-xl shadow-md hover:border-indigo-500/50 hover:bg-slate-800 transition-all group relative flex items-stretch overflow-hidden"
                         >
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${
-                                        status === HabitStatus.SUCCESS ? 'bg-habit-success text-black' :
-                                        status === HabitStatus.PARTIAL ? 'bg-habit-partial text-black' :
-                                        status === HabitStatus.FAIL ? 'bg-habit-fail text-white' :
-                                        'bg-slate-800 text-slate-500'
-                                    }`}>
-                                        {status === HabitStatus.SUCCESS ? '✓' : 
-                                         status === HabitStatus.FAIL ? '✕' : 
-                                         status === HabitStatus.PARTIAL ? '!' : '•'}
-                                    </div>
-                                    <div>
-                                        <h2 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors">{habit.name}</h2>
-                                        <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
-                                            <span className="flex items-center gap-1">
-                                                <Activity size={12} /> Streak: {streak} days
-                                            </span>
-                                            {status !== HabitStatus.NONE && (
-                                                <span className="text-slate-400">• Today logged</span>
-                                            )}
-                                        </div>
+                            <div 
+                                onClick={() => openHabitDetail(habit.id)}
+                                className="flex-grow p-5 flex items-center gap-4 cursor-pointer"
+                            >
+                                <div className={`w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center text-xl ${
+                                    status === HabitStatus.SUCCESS ? 'bg-habit-success text-black' :
+                                    status === HabitStatus.PARTIAL ? 'bg-habit-partial text-black' :
+                                    status === HabitStatus.FAIL ? 'bg-habit-fail text-white' :
+                                    'bg-slate-800 text-slate-500'
+                                }`}>
+                                    {status === HabitStatus.SUCCESS ? '✓' : 
+                                     status === HabitStatus.FAIL ? '✕' : 
+                                     status === HabitStatus.PARTIAL ? '!' : '•'}
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors">{habit.name}</h2>
+                                    <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                                        <span className="flex items-center gap-1">
+                                            <Activity size={12} /> Streak: {streak} days
+                                        </span>
+                                        {status !== HabitStatus.NONE && (
+                                            <span className="text-slate-400">• Today logged</span>
+                                        )}
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <button 
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            removeHabit(habit.id);
-                                        }}
-                                        className="p-2 text-slate-700 hover:text-red-500 hover:bg-slate-950 rounded-full transition-colors z-10"
-                                        title="Delete Habit"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                    <ChevronRight className="text-slate-600 group-hover:text-white transition-colors" />
-                                </div>
+                            </div>
+
+                            <div className="flex items-center pr-4 pl-2 border-l border-slate-800/50 gap-1">
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        removeHabit(habit.id);
+                                    }}
+                                    className="p-2 text-slate-600 hover:text-red-500 hover:bg-slate-900/80 rounded-full transition-colors z-10"
+                                    title="Delete Habit"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                                <button
+                                    onClick={() => openHabitDetail(habit.id)}
+                                    className="p-2 text-slate-600 group-hover:text-white transition-colors"
+                                >
+                                    <ChevronRight />
+                                </button>
                             </div>
                         </div>
                     );
